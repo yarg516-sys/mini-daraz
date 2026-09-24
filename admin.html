@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Daraz - Seller Center & Admin Portal | Pakistan</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 Free CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Application Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/product-cards.css">
+    <link rel="stylesheet" href="css/product-modal.css">
+    <link rel="stylesheet" href="css/cart-checkout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background-color: #f8fafc;">
+
+    <!-- Top Notice Bar -->
+    <div class="top-notice-bar">
+        <div class="container top-notice-content">
+            <div>🇵🇰 Mini Daraz Seller Center • Pakistan Business Operations Hub</div>
+            <div>
+                <a href="index.html" style="color:#fde047; font-weight:700;"><i class="fa-solid fa-arrow-left"></i> Back to Customer Store</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Header -->
+    <header class="site-header" style="background:#ffffff; border-bottom:1px solid var(--border-color);">
+        <div class="container" style="padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;">
+            <a href="index.html" class="brand-logo">
+                <div class="logo-symbol">MD</div>
+                <div class="logo-text-wrap">
+                    <span class="logo-title">Mini<span>Daraz</span> <small style="font-size:0.75rem; background:#fee2e2; color:#dc2626; padding:2px 6px; border-radius:4px;">Seller Center</small></span>
+                    <span class="logo-tagline">Merchant Management Portal</span>
+                </div>
+            </a>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="btn-primary" onclick="Seller.openAddProductModal()">
+                    <i class="fa-solid fa-plus"></i> List New Product
+                </button>
+                <a href="index.html" class="btn-outline">
+                    <i class="fa-solid fa-shop"></i> View Live Store
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Seller Container -->
+    <main class="container" style="padding: 30px 16px;">
+        <div class="seller-title-group" style="margin-bottom: 24px;">
+            <h2>Seller & Inventory Operations Dashboard</h2>
+            <p>Real-time oversight of your Pakistani e-commerce catalog, customer orders, and revenue metrics.</p>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="seller-stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Store Revenue</span>
+                    <span class="stat-value" id="stat-total-revenue">₨ 0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Customer Orders</span>
+                    <span class="stat-value" id="stat-total-orders">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-box-archive"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Active Products Listed</span>
+                    <span class="stat-value" id="stat-total-products">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Average Order Size</span>
+                    <span class="stat-value" id="stat-avg-order">₨ 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs & Tables -->
+        <div class="seller-tabs-wrap">
+            <div class="seller-tab-nav">
+                <button class="seller-tab-btn active" onclick="document.getElementById('tab-seller-inventory').style.display='block'; document.getElementById('tab-seller-orders').style.display='none'; this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">
+                    <i class="fa-solid fa-boxes-stacked"></i> Products Inventory (<span id="admin-inv-count">30+</span>)
+                </button>
+                <button class="seller-tab-btn" onclick="document.getElementById('tab-seller-inventory').style.display='none'; document.getElementById('tab-seller-orders').style.display='block'; this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">
+                    <i class="fa-solid fa-truck-ramp-box"></i> Customer Orders Fulfillment
+                </button>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="tab-seller-inventory" class="seller-tab-content">
+                <div class="table-toolbar">
+                    <div class="table-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Filter inventory items..." oninput="Seller.renderInventoryTable(this.value)">
+                    </div>
+                    <button class="btn-primary-sm" onclick="Seller.openAddProductModal()">
+                        <i class="fa-solid fa-plus"></i> Add Product
+                    </button>
+                </div>
+
+                <div class="seller-table-container">
+                    <table class="seller-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Details</th>
+                                <th>Price (₨)</th>
+                                <th>Stock</th>
+                                <th>Rating</th>
+                                <th>City</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="seller-products-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="tab-seller-orders" class="seller-tab-content" style="display: none;">
+                <div class="seller-table-container">
+                    <table class="seller-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer Details</th>
+                                <th>Items</th>
+                                <th>Total (₨)</th>
+                                <th>Payment</th>
+                                <th>Fulfillment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="seller-orders-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 680px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.25rem;"><i class="fa-solid fa-plus-circle text-orange-500"></i> List New Product</h3>
+                <button class="modal-close-btn" onclick="Seller.closeAddProductModal()">&times;</button>
+            </div>
+
+            <form id="add-product-form" onsubmit="Seller.handleAddProductSubmit(event)">
+                <div class="form-group">
+                    <label>Product Title *</label>
+                    <input type="text" id="seller-product-title" placeholder="e.g. Realme Buds Air 5 Pro ANC" required>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="seller-product-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Name</label>
+                        <input type="text" id="seller-product-brand" placeholder="e.g. Realme">
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>Selling Price (₨) *</label>
+                        <input type="number" id="seller-product-price" placeholder="12500" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Original Price (₨)</label>
+                        <input type="number" id="seller-product-oldprice" placeholder="15000">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="seller-product-stock" value="20" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Seller Store Name</label>
+                        <input type="text" id="seller-store-name" value="Official Karachi Gadgets">
+                    </div>
+                    <div class="form-group">
+                        <label>Seller City in Pakistan</label>
+                        <select id="seller-store-city">
+                            <option value="Karachi" selected>Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Rawalpindi">Rawalpindi</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Image URL *</label>
+                    <input type="url" id="seller-product-image" value="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="seller-product-desc" rows="3" placeholder="Enter product highlights..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button type="button" class="btn-outline" onclick="Seller.closeAddProductModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Publish to Marketplace</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 680px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.25rem;"><i class="fa-solid fa-pen-to-square text-blue-500"></i> Edit Product Details</h3>
+                <button class="modal-close-btn" onclick="Seller.closeEditModal()">&times;</button>
+            </div>
+
+            <form id="edit-product-form" onsubmit="Seller.handleEditProductSubmit(event)">
+                <div class="form-group">
+                    <label>Product Title *</label>
+                    <input type="text" id="edit-product-title" required>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="edit-product-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Name</label>
+                        <input type="text" id="edit-product-brand">
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>Price (₨) *</label>
+                        <input type="number" id="edit-product-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Old Price (₨)</label>
+                        <input type="number" id="edit-product-oldprice">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="edit-product-stock" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Image URL *</label>
+                    <input type="url" id="edit-product-image" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Description</label>
+                    <textarea id="edit-product-desc" rows="3"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button type="button" class="btn-outline" onclick="Seller.closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Details / Confirmation Modal -->
+    <div id="order-confirmation-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 750px;">
+            <div id="confirmation-details"></div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/seller.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await store.init();
+            Seller.init();
+        });
+    </script>
+</body>
+</html>

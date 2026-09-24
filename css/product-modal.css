@@ -1,0 +1,434 @@
+/* =========================================================
+   Mini Daraz - Product Detail Modal & Gallery Stylesheet
+   ========================================================= */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-backdrop.active {
+    display: flex;
+}
+
+.modal-container {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 950px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+    animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: #f1f5f9;
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+    transition: all var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+    background: #e2e8f0;
+    color: var(--danger);
+}
+
+/* Layout */
+.modal-product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 32px;
+    padding: 30px;
+}
+
+/* Gallery Left */
+.modal-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.main-image-container {
+    width: 100%;
+    height: 380px;
+    border-radius: var(--radius-md);
+    background: #f8fafc;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.modal-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.thumb-img {
+    width: 68px;
+    height: 68px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.thumb-img.active,
+.thumb-img:hover {
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+.pakistan-guarantee-box {
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.82rem;
+}
+
+.guarantee-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.guarantee-item i {
+    font-size: 1.1rem;
+}
+
+.guarantee-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.guarantee-item strong {
+    color: var(--secondary);
+    font-size: 0.84rem;
+}
+
+.guarantee-item span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* Details Right */
+.modal-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-category-badge {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.modal-product-title {
+    font-size: 1.4rem;
+    color: var(--secondary);
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.modal-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+}
+
+.modal-price-box {
+    background: #fff8f5;
+    border: 1px solid #ffedd5;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.modal-current-price {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.modal-old-price {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.modal-discount-tag {
+    background: var(--primary);
+    color: var(--text-white);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Seller Card inside Modal */
+.modal-seller-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.seller-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.seller-info-content {
+    flex: 1;
+}
+
+.seller-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.seller-shop-name {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--secondary);
+}
+
+.seller-metrics {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 8px;
+}
+
+/* Variants & Stepper */
+.variant-section {
+    margin-bottom: 14px;
+}
+
+.variant-label {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--secondary);
+    margin-bottom: 6px;
+}
+
+.variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.variant-pill {
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--secondary);
+    transition: all var(--transition-fast);
+}
+
+.variant-pill:hover,
+.variant-pill.selected {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.quantity-section {
+    margin-bottom: 20px;
+}
+
+.quantity-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.quantity-stepper button {
+    background: #f1f5f9;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    color: var(--secondary);
+    transition: background var(--transition-fast);
+}
+
+.quantity-stepper button:hover {
+    background: #e2e8f0;
+}
+
+.quantity-stepper input {
+    width: 45px;
+    text-align: center;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--secondary);
+}
+
+/* Modal Action Row */
+.modal-action-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.modal-btn-cart {
+    flex: 1.3;
+    background: var(--primary);
+    color: var(--text-white);
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all var(--transition-fast);
+}
+
+.modal-btn-cart:hover {
+    background: var(--primary-hover);
+}
+
+.modal-btn-buy {
+    flex: 1;
+    background: var(--secondary);
+    color: var(--text-white);
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+}
+
+.modal-btn-buy:hover {
+    background: #334155;
+}
+
+.modal-btn-wishlist {
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.modal-btn-wishlist:hover,
+.modal-btn-wishlist.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+/* Specs & Description */
+.product-description-wrap {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+    margin-bottom: 16px;
+}
+
+.description-title,
+.specs-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 8px;
+}
+
+.description-text {
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+}
+
+.specs-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+}
+
+.spec-label {
+    background: #f8fafc;
+    font-weight: 600;
+    color: var(--secondary);
+    width: 35%;
+}
+
+.spec-value {
+    color: #475569;
+}

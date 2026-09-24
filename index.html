@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Daraz - Pakistan’s Trusted Online Marketplace | 100% Authentic Products</title>
+    
+    <!-- Meta tags for professional branding -->
+    <meta name="description" content="Mini Daraz is Pakistan's leading e-commerce marketplace. Shop over 10,000+ authentic items with Cash on Delivery, JazzCash, and Easypaisa across Karachi, Lahore, Islamabad, and all cities.">
+    <meta name="keywords" content="Mini Daraz, Pakistan Online Shopping, Daraz, Karachi, Lahore, Islamabad, Cash on Delivery, Mobile Phones, Laptops, Fashion">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 Free CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Application Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/hero-banner.css">
+    <link rel="stylesheet" href="css/product-cards.css">
+    <link rel="stylesheet" href="css/product-modal.css">
+    <link rel="stylesheet" href="css/cart-checkout.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Top Utility & Pakistani Delivery Bar -->
+    <div class="top-notice-bar">
+        <div class="container top-notice-content">
+            <div class="top-left-info">
+                <span>🇵🇰 Welcome to <strong>Mini Daraz</strong> - Nationwide Express Delivery across Pakistan</span>
+                <span class="top-highlight"><i class="fa-solid fa-shield-halved"></i> 100% In-App Safe Buying & Selling</span>
+            </div>
+            <div class="top-right-links">
+                <a href="javascript:void(0)" onclick="App.switchView('orders')"><i class="fa-solid fa-truck"></i> Track Order</a>
+                <a href="javascript:void(0)" onclick="App.switchView('seller')" class="seller-center-pill"><i class="fa-solid fa-store"></i> Seller Center / Sell on Mini Daraz</a>
+                <a href="javascript:void(0)" onclick="UI.showToast('Mini Daraz 24/7 Helpline: 021-111-DARAZ (32729)', 'info')"><i class="fa-solid fa-headset"></i> Customer Care</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Main Header -->
+    <header class="site-header">
+        <div class="main-navbar">
+            <div class="container navbar-layout">
+                <!-- Brand Logo -->
+                <a href="javascript:void(0)" onclick="App.switchView('home')" class="brand-logo">
+                    <div class="logo-symbol">MD</div>
+                    <div class="logo-text-wrap">
+                        <span class="logo-title">Mini<span>Daraz</span></span>
+                        <span class="logo-tagline">Pakistan's Marketplace</span>
+                    </div>
+                </a>
+
+                <!-- Location Selector Button -->
+                <button class="city-picker-btn" onclick="UI.openCityModal()" title="Change Delivery City">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <span style="font-size: 0.68rem; color: var(--text-muted); display: block;">Delivery Location:</span>
+                        <span class="city-name-text" id="current-city-label">Deliver to: Karachi</span>
+                    </div>
+                </button>
+
+                <!-- Mega Search Bar -->
+                <div class="search-bar-wrap">
+                    <div class="search-form">
+                        <input type="text" id="main-search-input" class="search-input" placeholder="Search in Mini Daraz (e.g. Samsung S24, Kurta, Bat, Earbuds)..." autocomplete="off">
+                        <button class="search-btn" onclick="App.switchView('browse')">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+
+                    <!-- Auto-complete Suggestions Popup -->
+                    <div class="search-suggestions-dropdown" id="search-suggestions-box"></div>
+                </div>
+
+                <!-- Navigation Action Icons -->
+                <div class="nav-actions">
+                    <!-- Wishlist Icon -->
+                    <button class="nav-icon-btn" onclick="UI.openWishlistModal()" title="Saved Wishlist">
+                        <i class="fa-regular fa-heart"></i>
+                        <span class="badge-counter" id="wishlist-count-badge" style="display:none;">0</span>
+                        <span class="action-label">Wishlist</span>
+                    </button>
+
+                    <!-- Cart Drawer Trigger -->
+                    <button class="nav-icon-btn cart-nav-btn" onclick="UI.openCartDrawer()" title="Shopping Cart">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="badge-counter" id="cart-count-badge" style="display:none;">0</span>
+                        <span class="action-label">Cart</span>
+                    </button>
+
+                    <!-- My Orders -->
+                    <button class="nav-icon-btn nav-link-btn" data-view="orders" onclick="App.switchView('orders')" title="My Orders">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span class="action-label">My Orders</span>
+                    </button>
+
+                    <!-- Seller / Admin Portal -->
+                    <button class="nav-icon-btn nav-link-btn" data-view="seller" onclick="App.switchView('seller')" title="Seller & Admin Dashboard">
+                        <i class="fa-solid fa-store text-orange-500"></i>
+                        <span class="action-label" style="color:var(--primary);">Seller Center</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories & Navigation Mega Bar -->
+        <nav class="categories-nav-bar">
+            <div class="container categories-bar-layout">
+                <!-- Dropdown Trigger -->
+                <div class="category-dropdown-wrap">
+                    <button class="btn-all-categories">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>All Categories</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <ul class="category-dropdown-menu" id="nav-categories-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+
+                <!-- Quick Category Links -->
+                <ul class="quick-links-nav">
+                    <li><a href="javascript:void(0)" class="nav-link-btn active" data-view="home" onclick="App.switchView('home')"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li><a href="javascript:void(0)" class="nav-link-btn" data-view="browse" onclick="App.switchView('browse')"><i class="fa-solid fa-bag-shopping"></i> Browse Catalog <span class="nav-link-badge">30+ Items</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="UI.filterByCategory('mobile-phones')"><i class="fa-solid fa-mobile-screen"></i> Mobile Phones</a></li>
+                    <li><a href="javascript:void(0)" onclick="UI.filterByCategory('laptops-computers')"><i class="fa-solid fa-laptop"></i> Laptops</a></li>
+                    <li><a href="javascript:void(0)" onclick="UI.filterByCategory('mens-fashion')"><i class="fa-solid fa-shirt"></i> Fashion</a></li>
+                    <li><a href="javascript:void(0)" onclick="UI.filterByCategory('gaming')"><i class="fa-solid fa-gamepad"></i> Gaming</a></li>
+                    <li><a href="javascript:void(0)" onclick="UI.showToast('Vouchers: Use DARAZ10 or AZADI50 at checkout!', 'success')"><i class="fa-solid fa-tag text-orange-500"></i> Discount Vouchers</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container with Dynamic Views -->
+    <main class="main-body-content">
+
+        <!-- ================= VIEW 1: HOME MARKETPLACE ================= -->
+        <section id="view-home" class="app-view">
+            <!-- Hero Banner Section -->
+            <div class="hero-section">
+                <div class="container">
+                    <div class="hero-grid-layout">
+                        <!-- Main Carousel Slider -->
+                        <div class="hero-slider-container">
+                            <!-- Slide 1 -->
+                            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1200&q=80');">
+                                <div class="hero-slide-overlay"></div>
+                                <div class="hero-slide-content">
+                                    <span class="hero-pill-tag"><i class="fa-solid fa-bolt"></i> Mega Pakistan Sale</span>
+                                    <h2>Grand Azadi Deals & Tech Festival</h2>
+                                    <p>Up to 50% OFF on PTA Approved Smartphones, Laptops, Audio Gear & Fashion across Karachi, Lahore & Islamabad.</p>
+                                    <button class="btn-primary" onclick="App.switchView('browse')">Shop Deals Now <i class="fa-solid fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=1200&q=80');">
+                                <div class="hero-slide-overlay"></div>
+                                <div class="hero-slide-content">
+                                    <span class="hero-pill-tag"><i class="fa-solid fa-laptop"></i> High-End Computing</span>
+                                    <h2>MacBooks & RTX Gaming Laptops</h2>
+                                    <p>Official warranty backed laptops from Apple, HP, and Dell with free insured express delivery.</p>
+                                    <button class="btn-primary" onclick="UI.filterByCategory('laptops-computers')">Explore Laptops <i class="fa-solid fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 -->
+                            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80');">
+                                <div class="hero-slide-overlay"></div>
+                                <div class="hero-slide-content">
+                                    <span class="hero-pill-tag"><i class="fa-solid fa-vest-patches"></i> Pakistani Apparel</span>
+                                    <h2>Festive Embroidered Kurtas & Lawn</h2>
+                                    <p>Authentic collections from Junaid Jamshed, Alkaram Studio, Khaadi, and Servis Shoes.</p>
+                                    <button class="btn-primary" onclick="UI.filterByCategory('mens-fashion')">Shop Fashion <i class="fa-solid fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Slider Controls -->
+                            <div class="hero-dots">
+                                <div class="hero-dot active" onclick="App.showSlide(0)"></div>
+                                <div class="hero-dot" onclick="App.showSlide(1)"></div>
+                                <div class="hero-dot" onclick="App.showSlide(2)"></div>
+                            </div>
+
+                            <div class="hero-controls">
+                                <button class="hero-btn-arrow" onclick="App.prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="hero-btn-arrow" onclick="App.nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Side Promo Cards -->
+                        <div class="hero-side-promos">
+                            <a href="javascript:void(0)" onclick="UI.filterByCategory('headphones-audio')" class="side-promo-card" style="background-image: url('https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80');">
+                                <div class="side-promo-overlay"></div>
+                                <div class="side-promo-content">
+                                    <h3>Audionic Earbuds</h3>
+                                    <p>Starting from Rs. 4,299 with 1 Year Warranty</p>
+                                    <span class="promo-tag-orange">Explore Audio <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
+                            </a>
+
+                            <a href="javascript:void(0)" onclick="UI.filterByCategory('sports-fitness')" class="side-promo-card" style="background-image: url('https://images.unsplash.com/photo-1531415074868-036b1c57e329?auto=format&fit=crop&w=600&q=80');">
+                                <div class="side-promo-overlay"></div>
+                                <div class="side-promo-content">
+                                    <h3>CA Plus Cricket Gear</h3>
+                                    <p>Original Sialkot English Willow Bats</p>
+                                    <span class="promo-tag-orange">Explore Sports <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges Row -->
+                    <div class="trust-badges-bar">
+                        <div class="trust-badge-item">
+                            <div class="trust-icon-box"><i class="fa-solid fa-money-bill-wave"></i></div>
+                            <div class="trust-text-box">
+                                <h4>Cash on Delivery</h4>
+                                <p>Pay at your doorstep anywhere in Pakistan</p>
+                            </div>
+                        </div>
+                        <div class="trust-badge-item">
+                            <div class="trust-icon-box"><i class="fa-solid fa-shield-check"></i></div>
+                            <div class="trust-text-box">
+                                <h4>100% Authentic</h4>
+                                <p>Direct brand & verified seller products</p>
+                            </div>
+                        </div>
+                        <div class="trust-badge-item">
+                            <div class="trust-icon-box"><i class="fa-solid fa-rotate-left"></i></div>
+                            <div class="trust-text-box">
+                                <h4>7 Days Easy Return</h4>
+                                <p>Hassle-free direct in-app refunds</p>
+                            </div>
+                        </div>
+                        <div class="trust-badge-item">
+                            <div class="trust-icon-box"><i class="fa-solid fa-truck-fast"></i></div>
+                            <div class="trust-text-box">
+                                <h4>Fast Courier Network</h4>
+                                <p>TCS, Leopards & Daraz Express</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strict Internal Marketplace Security Notice -->
+                    <div class="daraz-safety-alert">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <div>
+                            <strong>Mini Daraz Buyer & Seller Protection Policy:</strong>
+                            <span>All buying and selling must be completed securely through the Mini Daraz website. For security, buyer dispute protection and official courier tracking, users should never redirect transactions to WhatsApp or external messaging platforms.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Section -->
+            <section class="categories-section">
+                <div class="container">
+                    <div class="section-header-row">
+                        <h2 class="section-title"><i class="fa-solid fa-layer-group text-orange-500"></i> Popular Categories</h2>
+                        <a href="javascript:void(0)" onclick="App.switchView('browse')" class="section-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                    <div class="categories-scroll-grid" id="categories-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Flash Sale Section with Countdown -->
+            <section class="container">
+                <div class="flash-sale-container">
+                    <div class="flash-sale-header">
+                        <div class="flash-title-wrap">
+                            <i class="fa-solid fa-bolt flash-bolt-icon"></i>
+                            <h3>Flash Sale Deals</h3>
+                        </div>
+                        <div class="flash-countdown-wrap">
+                            <span>Ending in:</span>
+                            <div class="flash-timer-display" id="flash-sale-timer">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="products-grid" id="flash-sale-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trending Products Section -->
+            <section class="container" style="margin-bottom: 30px;">
+                <div class="section-header-row">
+                    <h2 class="section-title"><i class="fa-solid fa-fire text-orange-500"></i> Trending in Pakistan</h2>
+                    <a href="javascript:void(0)" onclick="App.switchView('browse')" class="section-link">See More <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <div class="products-grid" id="trending-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Best Budget Deals Under Rs. 10,000 -->
+            <section class="container" style="margin-bottom: 30px;">
+                <div class="section-header-row">
+                    <h2 class="section-title"><i class="fa-solid fa-tags text-emerald-600"></i> Best Deals & Discount Picks</h2>
+                    <a href="javascript:void(0)" onclick="App.switchView('browse')" class="section-link">Explore Deals <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <div class="products-grid" id="deals-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Recommended For You -->
+            <section class="container" style="margin-bottom: 40px;">
+                <div class="section-header-row">
+                    <h2 class="section-title"><i class="fa-solid fa-thumbs-up text-blue-500"></i> Recommended For You</h2>
+                </div>
+                <div class="products-grid" id="recommended-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </section>
+
+        <!-- ================= VIEW 2: BROWSE CATALOG & SEARCH FILTERS ================= -->
+        <section id="view-browse" class="app-view container" style="display: none; padding: 24px 16px;">
+            <div class="browse-layout" style="display: grid; grid-template-columns: 260px 1fr; gap: 24px;">
+                <!-- Filter Sidebar -->
+                <aside class="browse-sidebar" style="background:var(--bg-surface); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color); height: fit-content;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                        <h3 style="font-size: 1.05rem; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-filter"></i> Filters</h3>
+                        <button onclick="store.resetFilters()" style="color:var(--primary); font-size:0.8rem; font-weight:600;">Reset</button>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Category</label>
+                        <select id="filter-category-select" onchange="store.setFilter('category', this.value)">
+                            <option value="all">All Categories</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Price Range (PKR ₨)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                            <input type="number" id="filter-min-price" placeholder="Min" value="0">
+                            <input type="number" id="filter-max-price" placeholder="Max" value="500000">
+                        </div>
+                        <button class="btn-secondary-sm" id="btn-apply-price" style="width: 100%; justify-content: center;">Apply Price</button>
+                    </div>
+
+                    <!-- Rating Filter -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Minimum Rating</label>
+                        <select onchange="store.setFilter('minRating', parseFloat(this.value))">
+                            <option value="0">All Ratings</option>
+                            <option value="4.5">4.5 Stars & Above</option>
+                            <option value="4.8">4.8 Stars (Top Rated)</option>
+                        </select>
+                    </div>
+
+                    <!-- Stock Filter -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                        <input type="checkbox" id="filter-stock-checkbox" onchange="store.setFilter('inStockOnly', this.checked)">
+                        <label for="filter-stock-checkbox" style="font-size: 0.85rem; font-weight:600; cursor:pointer;">In Stock Only</label>
+                    </div>
+                </aside>
+
+                <!-- Products Result Area -->
+                <div class="browse-results-area">
+                    <div style="background:var(--bg-surface); padding: 12px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <span id="search-results-count" style="font-weight: 700; color:var(--secondary);">Loading catalog...</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 0.85rem; color:var(--text-muted);">Sort By:</label>
+                            <select id="sort-products-select" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+                                <option value="popular">Most Popular</option>
+                                <option value="rating">Highest Rated</option>
+                                <option value="price_asc">Price: Low to High</option>
+                                <option value="price_desc">Price: High to Low</option>
+                                <option value="discount">Biggest Discount</option>
+                                <option value="newest">New Arrivals</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="products-grid" id="all-products-grid" style="padding: 0;">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 3: CUSTOMER "MY ORDERS" ================= -->
+        <section id="view-orders" class="app-view container" style="display: none;">
+            <div class="orders-page-container">
+                <div class="orders-page-header">
+                    <h2><i class="fa-solid fa-truck-fast text-orange-500"></i> My Orders & Parcel Tracking</h2>
+                    <p style="color:var(--text-muted); font-size:0.88rem;">Track your real-time delivery status, view invoices, and manage past orders across Pakistan.</p>
+                </div>
+
+                <div id="customer-orders-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 4: SELLER & ADMIN PORTAL ================= -->
+        <section id="view-seller" class="app-view container" style="display: none;">
+            <div class="seller-portal-container">
+                <div class="seller-header-bar">
+                    <div class="seller-title-group">
+                        <h2><i class="fa-solid fa-store text-orange-500"></i> Mini Daraz Seller & Admin Hub</h2>
+                        <p>Manage store inventory, list new products, and track nationwide customer orders directly in-platform.</p>
+                    </div>
+                    <button class="btn-primary" onclick="Seller.openAddProductModal()">
+                        <i class="fa-solid fa-plus"></i> Add New Product
+                    </button>
+                </div>
+
+                <!-- Seller Metrics -->
+                <div class="seller-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Store Revenue</span>
+                            <span class="stat-value" id="stat-total-revenue">₨ 0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Orders Placed</span>
+                            <span class="stat-value" id="stat-total-orders">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-box-archive"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Active Catalog Items</span>
+                            <span class="stat-value" id="stat-total-products">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Avg. Order Value</span>
+                            <span class="stat-value" id="stat-avg-order">₨ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory & Orders Tabs -->
+                <div class="seller-tabs-wrap">
+                    <div class="seller-tab-nav">
+                        <button class="seller-tab-btn active" onclick="document.getElementById('tab-seller-inventory').style.display='block'; document.getElementById('tab-seller-orders').style.display='none'; this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">
+                            <i class="fa-solid fa-boxes-stacked"></i> Products Inventory (<span id="seller-inv-count">30+</span>)
+                        </button>
+                        <button class="seller-tab-btn" onclick="document.getElementById('tab-seller-inventory').style.display='none'; document.getElementById('tab-seller-orders').style.display='block'; this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">
+                            <i class="fa-solid fa-truck-ramp-box"></i> Customer Orders Management
+                        </button>
+                    </div>
+
+                    <!-- Tab 1: Inventory Table -->
+                    <div id="tab-seller-inventory" class="seller-tab-content">
+                        <div class="table-toolbar">
+                            <div class="table-search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" placeholder="Search inventory by title or category..." oninput="Seller.renderInventoryTable(this.value)">
+                            </div>
+                            <button class="btn-secondary-sm" onclick="store.init(); UI.showToast('Inventory refreshed from backend', 'success');">
+                                <i class="fa-solid fa-rotate"></i> Refresh Sync
+                            </button>
+                        </div>
+
+                        <div class="seller-table-container">
+                            <table class="seller-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product Title</th>
+                                        <th>Price (₨)</th>
+                                        <th>Stock</th>
+                                        <th>Rating</th>
+                                        <th>Seller City</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="seller-products-tbody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Orders Fulfillment Table -->
+                    <div id="tab-seller-orders" class="seller-tab-content" style="display: none;">
+                        <div class="seller-table-container">
+                            <table class="seller-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer Details</th>
+                                        <th>Items</th>
+                                        <th>Total (₨)</th>
+                                        <th>Payment</th>
+                                        <th>Fulfillment Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="seller-orders-tbody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= MODALS & DRAWERS ================= -->
+
+    <!-- 1. Product Details Modal -->
+    <div id="product-modal" class="modal-backdrop">
+        <div class="modal-container">
+            <button class="modal-close-btn" onclick="UI.closeProductModal()">&times;</button>
+            <div id="product-modal-content">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Cart Slide-Out Drawer -->
+    <div class="cart-drawer-backdrop" onclick="UI.closeCartDrawer()"></div>
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3><i class="fa-solid fa-cart-shopping text-orange-500"></i> My Shopping Cart</h3>
+            <button class="cart-close-btn" onclick="UI.closeCartDrawer()">&times;</button>
+        </div>
+
+        <div id="cart-drawer-items" class="cart-drawer-items">
+            <!-- Populated by JS -->
+        </div>
+
+        <div class="cart-drawer-footer">
+            <!-- Coupon input -->
+            <div class="cart-voucher-input-wrap">
+                <input type="text" id="cart-voucher-code" placeholder="Enter Voucher (e.g. DARAZ10)">
+                <button type="button" onclick="const res = store.applyCoupon(document.getElementById('cart-voucher-code').value); if(res.success) { UI.showToast(res.message, 'success'); } else { UI.showToast(res.message, 'error'); }">Apply</button>
+            </div>
+
+            <div class="cart-summary-line">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal-val">₨ 0</span>
+            </div>
+            <div class="cart-summary-line">
+                <span>Delivery (${store.selectedCity ? store.selectedCity.name : 'Karachi'}):</span>
+                <span id="cart-delivery-val">₨ 150</span>
+            </div>
+            <div class="cart-summary-line">
+                <span>Voucher Discount:</span>
+                <span id="cart-discount-val" style="color:var(--accent-emerald);">₨ 0</span>
+            </div>
+            <div class="cart-summary-total">
+                <span>Total Amount:</span>
+                <span id="cart-total-val" class="text-orange-600">₨ 0</span>
+            </div>
+
+            <button id="cart-checkout-btn" class="btn-checkout-drawer" onclick="Checkout.openCheckout()">
+                <i class="fa-solid fa-lock"></i> Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. In-App Pakistani Checkout Modal -->
+    <div id="checkout-modal" class="modal-backdrop">
+        <div class="checkout-modal-container">
+            <div class="checkout-header">
+                <h3><i class="fa-solid fa-shield-check text-emerald-600"></i> Secure Pakistani Checkout</h3>
+                <button class="modal-close-btn" onclick="Checkout.closeCheckout()">&times;</button>
+            </div>
+
+            <form id="checkout-form" onsubmit="Checkout.handlePlaceOrder(event)" class="checkout-layout-grid">
+                <!-- Left Column: Delivery & Payment Details -->
+                <div class="checkout-form-section">
+                    <!-- Delivery Address Box -->
+                    <div class="form-block">
+                        <h4 class="form-block-title"><i class="fa-solid fa-location-dot text-orange-500"></i> 1. Delivery Information</h4>
+                        
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" id="checkout-name" placeholder="Muhammad Shafeeq" value="Muhammad Shafeeq" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Pakistani Mobile Number *</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="tel" id="checkout-phone" placeholder="0300-1234567" value="0300-1234567" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Complete House / Street Address *</label>
+                            <input type="text" id="checkout-address" placeholder="House 123, Street 4, Sector F-8/2" value="House 123, Street 4, Sector F-8/2" required>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Delivery City *</label>
+                                <select id="checkout-city" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Province</label>
+                                <input type="text" id="checkout-province" value="Punjab" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Postal Code</label>
+                                <input type="text" id="checkout-postal" value="44000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Selection Box -->
+                    <div class="form-block">
+                        <h4 class="form-block-title"><i class="fa-solid fa-credit-card text-blue-600"></i> 2. Select Payment Method</h4>
+                        
+                        <div class="payment-tabs-row">
+                            <button type="button" class="payment-tab-btn active" data-method="cod" onclick="Checkout.selectPaymentMethod('cod')">
+                                <i class="fa-solid fa-money-bill-wave text-emerald-600"></i>
+                                <span>Cash on Delivery</span>
+                            </button>
+                            <button type="button" class="payment-tab-btn" data-method="jazzcash" onclick="Checkout.selectPaymentMethod('jazzcash')">
+                                <i class="fa-solid fa-mobile-screen-button text-red-600"></i>
+                                <span>JazzCash</span>
+                            </button>
+                            <button type="button" class="payment-tab-btn" data-method="easypaisa" onclick="Checkout.selectPaymentMethod('easypaisa')">
+                                <i class="fa-solid fa-wallet text-emerald-500"></i>
+                                <span>Easypaisa</span>
+                            </button>
+                            <button type="button" class="payment-tab-btn" data-method="card" onclick="Checkout.selectPaymentMethod('card')">
+                                <i class="fa-solid fa-credit-card text-blue-500"></i>
+                                <span>Card (Visa/Master)</span>
+                            </button>
+                            <button type="button" class="payment-tab-btn" data-method="bank_transfer" onclick="Checkout.selectPaymentMethod('bank_transfer')">
+                                <i class="fa-solid fa-building-columns text-slate-600"></i>
+                                <span>Bank / Raast</span>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Payment Inputs Container -->
+                        <div id="payment-inputs-container">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Sticky Summary & Place Order Button -->
+                <div class="checkout-summary-sidebar">
+                    <h4 style="font-size: 1.05rem; font-weight:700; color:var(--secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Order Summary</h4>
+                    
+                    <div class="checkout-items-preview-list" id="checkout-items-list">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Coupon input in checkout -->
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" id="checkout-coupon-input" placeholder="Voucher Code" style="flex:1; border:1px solid var(--border-color); padding:6px 10px; border-radius:4px; font-size:0.82rem; text-transform:uppercase;">
+                        <button type="button" class="btn-secondary-sm" onclick="Checkout.applyCheckoutCoupon()">Apply</button>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color:var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 10px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Subtotal:</span>
+                            <span id="checkout-subtotal">₨ 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Estimated Delivery Fee:</span>
+                            <span id="checkout-delivery">₨ 150</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Voucher Savings:</span>
+                            <span id="checkout-discount" style="color:var(--accent-emerald);">₨ 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800; color:var(--secondary); border-top: 1px dashed var(--border-color); padding-top: 8px;">
+                            <span>Total Payable:</span>
+                            <span id="checkout-total" class="text-orange-600">₨ 0</span>
+                        </div>
+                    </div>
+
+                    <div class="daraz-safety-alert" style="font-size: 0.76rem; padding: 8px 10px;">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Guaranteed Safe Checkout. Order will be processed inside Mini Daraz with live SMS/tracking.</span>
+                    </div>
+
+                    <button type="submit" id="btn-confirm-order" class="btn-place-order-big">
+                        <i class="fa-solid fa-lock"></i> Place Secure Order
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Order Confirmation Modal -->
+    <div id="order-confirmation-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 750px;">
+            <div id="confirmation-details">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Pakistani City Selector Modal -->
+    <div id="city-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 550px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.2rem; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-location-dot text-orange-500"></i> Select Delivery City</h3>
+                <button class="modal-close-btn" onclick="UI.closeCityModal()">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color:var(--text-muted); margin-bottom: 14px;">Choose your destination city in Pakistan to see exact delivery charges and estimated arrival times.</p>
+            <div id="city-selector-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Wishlist Modal -->
+    <div id="wishlist-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 600px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.2rem; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-heart text-red-500"></i> My Saved Wishlist</h3>
+                <button class="modal-close-btn" onclick="UI.closeWishlistModal()">&times;</button>
+            </div>
+            <div id="wishlist-items-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Seller "Add Product" Modal -->
+    <div id="add-product-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 680px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.25rem;"><i class="fa-solid fa-plus-circle text-orange-500"></i> List New Product on Mini Daraz</h3>
+                <button class="modal-close-btn" onclick="Seller.closeAddProductModal()">&times;</button>
+            </div>
+
+            <form id="add-product-form" onsubmit="Seller.handleAddProductSubmit(event)">
+                <div class="form-group">
+                    <label>Product Title *</label>
+                    <input type="text" id="seller-product-title" placeholder="e.g. Soundpeats Air4 Pro Wireless Earbuds (Hi-Res)" required>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="seller-product-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Name</label>
+                        <input type="text" id="seller-product-brand" placeholder="e.g. Soundpeats / Samsung">
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>Selling Price (₨) *</label>
+                        <input type="number" id="seller-product-price" placeholder="4500" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Original Price (₨)</label>
+                        <input type="number" id="seller-product-oldprice" placeholder="6000">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="seller-product-stock" value="25" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Seller Store Name</label>
+                        <input type="text" id="seller-store-name" value="Pak Digital Hub">
+                    </div>
+                    <div class="form-group">
+                        <label>Seller City in Pakistan</label>
+                        <select id="seller-store-city">
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore" selected>Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Rawalpindi">Rawalpindi</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>High Resolution Image URL *</label>
+                    <input type="url" id="seller-product-image" placeholder="https://images.unsplash.com/photo-..." value="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Description & Highlights</label>
+                    <textarea id="seller-product-desc" rows="3" placeholder="Describe the item, specifications, and warranty details..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button type="button" class="btn-outline" onclick="Seller.closeAddProductModal()">Cancel</button>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Publish to Marketplace</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. Seller "Edit Product" Modal -->
+    <div id="edit-product-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 680px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.25rem;"><i class="fa-solid fa-pen-to-square text-blue-500"></i> Edit Product Details</h3>
+                <button class="modal-close-btn" onclick="Seller.closeEditModal()">&times;</button>
+            </div>
+
+            <form id="edit-product-form" onsubmit="Seller.handleEditProductSubmit(event)">
+                <div class="form-group">
+                    <label>Product Title *</label>
+                    <input type="text" id="edit-product-title" required>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="edit-product-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Name</label>
+                        <input type="text" id="edit-product-brand">
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>Price (₨) *</label>
+                        <input type="number" id="edit-product-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Old Price (₨)</label>
+                        <input type="number" id="edit-product-oldprice">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="edit-product-stock" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Image URL *</label>
+                    <input type="url" id="edit-product-image" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Description</label>
+                    <textarea id="edit-product-desc" rows="3"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button type="button" class="btn-outline" onclick="Seller.closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= SITE FOOTER ================= -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top-grid">
+                <!-- Column 1: Brand & Pakistan Trust -->
+                <div class="footer-brand">
+                    <h3><div class="logo-symbol" style="width:30px;height:30px;font-size:0.9rem;">MD</div> Mini Daraz</h3>
+                    <p>Mini Daraz is Pakistan's premier e-commerce marketplace connecting verified local businesses with millions of Pakistani shoppers. Shop 100% genuine products with Cash on Delivery and instant parcel tracking.</p>
+                    <div class="pak-cities-list">
+                        <strong>Nationwide Delivery Network:</strong> Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, Quetta, Gujranwala, Sialkot, Hyderabad, Sukkur, Bahawalpur, Abbottabad & 150+ more cities.
+                    </div>
+                </div>
+
+                <!-- Column 2: Customer Care -->
+                <div class="footer-col">
+                    <h4>Customer Care</h4>
+                    <ul class="footer-links">
+                        <li><a href="javascript:void(0)" onclick="App.switchView('orders')">Track Your Order</a></li>
+                        <li><a href="javascript:void(0)" onclick="UI.showToast('7 Days Hassle-Free In-App Returns Policy Active', 'info')">Returns & Refunds</a></li>
+                        <li><a href="javascript:void(0)" onclick="UI.openCityModal()">Shipping Rates & Cities</a></li>
+                        <li><a href="javascript:void(0)" onclick="UI.showToast('Payment Options: COD, JazzCash, Easypaisa, Raast, Card', 'info')">Payment Methods</a></li>
+                        <li><a href="javascript:void(0)" onclick="UI.showToast('Call 021-111-DARAZ for instant Pakistani support', 'info')">Help Center & FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Mini Daraz Info -->
+                <div class="footer-col">
+                    <h4>About Mini Daraz</h4>
+                    <ul class="footer-links">
+                        <li><a href="javascript:void(0)" onclick="App.switchView('home')">About Our Marketplace</a></li>
+                        <li><a href="javascript:void(0)" onclick="App.switchView('seller')">Sell on Mini Daraz (Seller Center)</a></li>
+                        <li><a href="javascript:void(0)" onclick="UI.showToast('Mini Daraz uses 256-bit SSL encrypted checkout', 'info')">Buyer Protection Guarantee</a></li>
+                        <li><a href="javascript:void(0)">Privacy Policy & Terms</a></li>
+                        <li><a href="javascript:void(0)">Daraz Express Couriers</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Verified Payments in Pakistan -->
+                <div class="footer-col">
+                    <h4>Verified Payment Methods</h4>
+                    <p style="font-size:0.8rem; color:#94a3b8;">Safe in-platform payment options for all Pakistani consumers:</p>
+                    <div class="payment-badges-wrap">
+                        <span class="pay-badge"><i class="fa-solid fa-money-bill-wave text-emerald-400"></i> Cash on Delivery</span>
+                        <span class="pay-badge"><i class="fa-solid fa-mobile-screen text-red-400"></i> JazzCash</span>
+                        <span class="pay-badge"><i class="fa-solid fa-wallet text-emerald-400"></i> Easypaisa</span>
+                        <span class="pay-badge"><i class="fa-brands fa-cc-visa text-blue-400"></i> Visa</span>
+                        <span class="pay-badge"><i class="fa-brands fa-cc-mastercard text-orange-400"></i> MasterCard</span>
+                        <span class="pay-badge"><i class="fa-solid fa-building-columns text-cyan-400"></i> Raast Instant / Bank</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Mini Daraz Pakistan Pvt. Ltd. All rights reserved. Built with modern HTML, CSS, JavaScript, and Supabase.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Script Suite -->
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/seller.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
